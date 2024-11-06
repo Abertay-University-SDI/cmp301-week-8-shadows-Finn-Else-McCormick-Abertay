@@ -25,12 +25,9 @@
 
 #include <cassert>
 #include <map>
-#include <typeindex>
-#include <typeinfo>
+#include <util/TypeIndexUtil.h>
 
-using namespace std;
 using namespace DirectX;
-
 
 class BaseShader : public IDeviceContextDependent
 {
@@ -41,7 +38,6 @@ public:
 	void Compute(int x, int y, int z);
 
 protected:
-	virtual void InitShader(const std::string&, const std::string&) = 0;
 	void LoadVertexShader(const std::string& filename);				///< Load Vertex shader, for stand position, tex, normal geomtry
 	void LoadColourVertexShader(const std::string& filename);		///< Load Vertex shader, pre-made for position and colour only
 	void LoadTextureVertexShader(const std::string& filename);		///< Load Vertex shader, pre-made for position and tex only
@@ -65,62 +61,74 @@ protected:
 	unique_resource<ID3D11ComputeShader> computeShader;
 	unique_resource<ID3D11InputLayout> layout;
 
+	enum ShaderType { VERTEX_SHADER, PIXEL_SHADER, HULL_SHADER, DOMAIN_SHADER, GEOMETRY_SHADER, COMPUTE_SHADER };
+
 protected:
-	template<typename BufferType>
-	void UploadConstantBuffer(const BufferType& bufferContents) {
-		auto& info = m_constantBuffers.at(std::type_index(typeid(BufferType)));
-		auto& buffer = info.resource;
+	template<typename BufferType> void UploadConstantBuffer(const BufferType& bufferContents) {
+		auto& info = m_constantBuffers.at(type_index<BufferType>());
+		auto& buffer = info.UniqueResource();
 		__Internal_UploadBuffer(buffer.get(), bufferContents);
-		if (info.pixelShaderSlot >= 0) {
-			p_deviceContext->PSSetConstantBuffers(info.pixelShaderSlot, 1, buffer.ptr_to_ptr());
-		}
-		if (info.vertexShaderSlot >= 0) {
-			p_deviceContext->VSSetConstantBuffers(info.vertexShaderSlot, 1, buffer.ptr_to_ptr());
+		auto& slotsMap = info.SlotsMap();
+		for (auto& pair : slotsMap) {
+			ShaderType shaderType = pair.first;
+			int slot = pair.second;
+			if (slot >= 0) {
+				switch (shaderType) {
+				case VERTEX_SHADER:		{ p_deviceContext->VSSetConstantBuffers(slot, 1, buffer.ptr_to_ptr()); } break;
+				case PIXEL_SHADER:		{ p_deviceContext->PSSetConstantBuffers(slot, 1, buffer.ptr_to_ptr()); } break;
+				case HULL_SHADER:		{ p_deviceContext->HSSetConstantBuffers(slot, 1, buffer.ptr_to_ptr()); } break;
+				case DOMAIN_SHADER:		{ p_deviceContext->DSSetConstantBuffers(slot, 1, buffer.ptr_to_ptr()); } break;
+				case GEOMETRY_SHADER:	{ p_deviceContext->GSSetConstantBuffers(slot, 1, buffer.ptr_to_ptr()); } break;
+				case COMPUTE_SHADER:	{ p_deviceContext->CSSetConstantBuffers(slot, 1, buffer.ptr_to_ptr()); } break;
+				}
+			}
 		}
 	}
 
 	unique_resource<ID3D11SamplerState> CreateSamplerState(D3D11_FILTER filter = D3D11_FILTER_ANISOTROPIC, D3D11_COMPARISON_FUNC comparisonFunc = D3D11_COMPARISON_ALWAYS);
 
-	template<typename BufferType>
-	void CreateConstantBuffer(int pixelSlot = -1, int vertexSlot = -1) {
-		for (auto& pair : m_constantBuffers) {
-			auto& info = pair.second;
-			assert(pixelSlot < 0 || pixelSlot != info.pixelShaderSlot);
-			assert(vertexSlot < 0 || vertexSlot != info.vertexShaderSlot);
-		}
+	template<typename BufferType> void CreateConstantBuffer() {
 		auto resource = unique_resource<ID3D11Buffer>(__Internal_CreateBuffer<BufferType>(D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE));
-		ConstBufferInfo info = ConstBufferInfo(std::move(resource), pixelSlot, vertexSlot);
-		m_constantBuffers.emplace(std::type_index(typeid(BufferType)), std::move(info));
+		m_constantBuffers.emplace(type_index<BufferType>(), ConstBufferInfo(std::move(resource)));
 	}
 
-	template<typename BufferType>
-	ID3D11Buffer* GetConstantBuffer() const {
-		return m_constantBuffers.at(std::type_index(typeid(BufferType))).resource.get();
+	template<typename BufferType, ShaderType Shader> void CreateConstantBuffer(int slot) {
+		CreateConstantBuffer<BufferType>();
+		SetConstantBufferSlot<BufferType, Shader>(slot);
 	}
 
-	template<typename BufferType>
-	bool HasConstantBuffer() const {
-		return m_constantBuffers.count(std::type_index(typeid(BufferType))) > 0;
+	template<typename BufferType> ID3D11Buffer* GetConstantBuffer() const { return m_constantBuffers.at(type_index<BufferType>()).Resource(); }
+	template<typename BufferType> bool HasConstantBuffer() const { return m_constantBuffers.count(type_index<BufferType>()) > 0; }
+
+	template<typename BufferType, ShaderType Shader> int GetConstantBufferSlot() const {
+		auto& info = m_constantBuffers.at(type_index<BufferType>());
+		return info.GetSlot<ShaderType>();
 	}
 
-	template<typename BufferType>
-	void SetConstantBufferSlots(int pixelSlot, int vertexSlot) {
-		auto& info = m_constantBuffers.at(std::type_index(typeid(BufferType)));
-		info.pixelShaderSlot = pixelSlot;
-		info.vertexShaderSlot = vertexSlot;
+	template<typename BufferType, ShaderType Shader> void SetConstantBufferSlot(int slot) {
+		auto& info = m_constantBuffers.at(type_index<BufferType>());
+		if (slot < 0) { info.ClearSlot<Shader>(); }
+		else {
+			// Assert that slot is not already in use
+			for (auto& pair : m_constantBuffers) { assert(slot != pair.second.GetSlot<Shader>()); }
+			info.SetSlot<Shader>(slot);
+		}
+	}
+
+	template<typename BufferType, ShaderType Shader> void ClearConstantBufferSlot() {
+		auto& info = m_constantBuffers.at(type_index<BufferType>());
+		info.ClearSlot<Shader>();
 	}
 
 private:
-	template<typename BufferType>
-	void __Internal_UploadBuffer(ID3D11Buffer* buffer, const BufferType& bufferContents) {
+	template<typename BufferType> void __Internal_UploadBuffer(ID3D11Buffer* buffer, const BufferType& bufferContents) {
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT result = p_deviceContext->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 		memcpy(mappedResource.pData, &bufferContents, sizeof(BufferType));
 		p_deviceContext->Unmap(buffer, 0);
 	}
 
-	template<typename BufferType>
-	ID3D11Buffer* __Internal_CreateBuffer(D3D11_BIND_FLAG bind, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, D3D11_CPU_ACCESS_FLAG cpuAccess = D3D11_CPU_ACCESS_WRITE) {
+	template<typename BufferType> ID3D11Buffer* __Internal_CreateBuffer(D3D11_BIND_FLAG bind, D3D11_USAGE usage = D3D11_USAGE_DEFAULT, D3D11_CPU_ACCESS_FLAG cpuAccess = D3D11_CPU_ACCESS_WRITE) {
 		D3D11_BUFFER_DESC bufferDesc{};
 		bufferDesc.Usage = usage;
 		bufferDesc.ByteWidth = sizeof(BufferType);
@@ -135,12 +143,26 @@ private:
 	}
 
 private:
-	struct ConstBufferInfo {
-		unique_resource<ID3D11Buffer> resource;
-		int pixelShaderSlot = -1;
-		int vertexShaderSlot = -1;
+	class ConstBufferInfo {
+	public:
+		ConstBufferInfo(unique_resource<ID3D11Buffer>&& resource);
 
-		ConstBufferInfo(unique_resource<ID3D11Buffer>&& resource, int pixelSlot = -1, int vertexSlot = -1);
+		ID3D11Buffer* Resource() const;
+		unique_resource<ID3D11Buffer>& UniqueResource();
+
+		template<ShaderType Shader> int GetSlot() const {
+			try								 { return m_slots.at(Shader); }
+			catch (const std::out_of_range&) { return -1; }
+		}
+
+		template<ShaderType Shader> void SetSlot(int slot)	{ m_slots[Shader] = slot; }
+		template<ShaderType Shader> void ClearSlot()		{ m_slots.erase(Shader); }
+
+		const std::map<ShaderType, int>& SlotsMap() const;
+
+	private:
+		unique_resource<ID3D11Buffer> pm_resource;
+		std::map<ShaderType, int> m_slots;
 	};
 
 	std::map<std::type_index, ConstBufferInfo> m_constantBuffers;

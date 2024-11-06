@@ -1,7 +1,7 @@
 #include "DirectionalBlurShader.h"
 
 DirectionalBlurShader::DirectionalBlurShader(const DeviceInfo& info, HWND hwnd) : PostprocessingShader(info, hwnd, "post/directionalBlur_post") {
-	CreateConstantBuffer<DirectionalBlurBuffer>(2);
+	CreateConstantBuffer<DirectionalBlurBuffer, PIXEL_SHADER>(2);
 }
 
 void DirectionalBlurShader::UploadExtraSceneData() {

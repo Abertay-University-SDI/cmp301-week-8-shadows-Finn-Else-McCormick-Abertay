@@ -62,16 +62,9 @@ void AppMain::Init()
 	pm_textureMgr->Load("placeholder", "res/DefaultDiffuse.png");
 
 	// Create shaders
-	pm_lightShader = std::make_unique<Shader>(deviceInfo, hwnd, "light_vs", "light_ps");
+	pm_lightShader = std::make_unique<Shader>(deviceInfo, hwnd, "scene/light_vs", "scene/light_ps");
 
 	pm_postDefaultShader = std::make_unique<PostprocessingShader>(deviceInfo, hwnd);
-
-	pm_blurHorizontalShader = std::make_unique<BlurShader>(deviceInfo, hwnd, "post/blurHorizontalPass_post");
-	pm_blurVerticalShader = std::make_unique<BlurShader>(deviceInfo, hwnd, "post/blurVerticalPass_post");
-
-	auto blurWeights = std::array<float, 5>{ 0.382928, 0.241732, 0.060598, 0.005977, 0.000229 };
-	pm_blurHorizontalShader->SceneDataAs<BlurShader::BlurData>().weights = blurWeights;
-	pm_blurVerticalShader->SceneDataAs<BlurShader::BlurData>().weights = blurWeights;
 
 	pm_directionalBlurShader = std::make_unique<DirectionalBlurShader>(deviceInfo, hwnd);
 	pm_directionalBlurShader->SceneDataAs<DirectionalBlurShader::DirectionalBlurData>();
@@ -217,8 +210,6 @@ bool AppMain::Render()
 	RenderPass(BackTarget(), *pm_playerCamera, true, m_models, m_lights, XMFLOAT3(0.2f, 0.2f, 0.2f), XMFLOAT4(0.39f, 0.58f, 0.92f, 1.f));
 
 	// Blur passes
-	//PostprocessPass(*pm_blurHorizontalShader);
-	//PostprocessPass(*pm_blurVerticalShader);
 	PostprocessPass(*pm_directionalBlurShader);
 
 	// Render to Backbuffer

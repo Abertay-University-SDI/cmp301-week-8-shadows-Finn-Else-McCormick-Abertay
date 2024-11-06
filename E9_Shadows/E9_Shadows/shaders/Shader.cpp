@@ -4,26 +4,21 @@
 
 Shader::Shader(const DeviceInfo& info, HWND hwnd, const std::string& vertexShader, const std::string& pixelShader) : BaseShader(info, hwnd)
 {
-	InitShader("shaders/" + vertexShader + ".cso", "shaders/" + pixelShader + ".cso");
-}
-
-void Shader::InitShader(const std::string& vsFilename, const std::string& psFilename)
-{
 	// Load (+ compile) shader files
-	LoadVertexShader(vsFilename);
-	LoadPixelShader(psFilename);
+	LoadVertexShader("shaders/" + vertexShader + ".cso");
+	LoadPixelShader("shaders/" + pixelShader + ".cso");
 
-	CreateConstantBuffer<MatrixBuffer>(-1, 0);
-	CreateConstantBuffer<LightsBuffer>(1, -1);
-	CreateConstantBuffer<CameraBuffer>(-1, 2);
-	CreateConstantBuffer<TimeBuffer>(0, 1);
+	CreateConstantBuffer<MatrixBuffer, VERTEX_SHADER>(0);
+	CreateConstantBuffer<LightsBuffer, PIXEL_SHADER>(1);
+	CreateConstantBuffer<CameraBuffer, VERTEX_SHADER>(2);
+	CreateConstantBuffer<TimeBuffer>(); SetConstantBufferSlot<TimeBuffer, PIXEL_SHADER>(0); SetConstantBufferSlot<TimeBuffer, VERTEX_SHADER>(1);
 
 	sampleState = CreateSamplerState();
 }
 
 void Shader::UploadMatrixData(const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection)
 {
-	// Transpose the matrices to prepare them for the shader.
+	// Transpose the matrices to prepare them for the shader
 	XMMATRIX tworld = XMMatrixTranspose(world);
 	XMMATRIX tview = XMMatrixTranspose(view);
 	XMMATRIX tproj = XMMatrixTranspose(projection);
@@ -82,5 +77,3 @@ Shader::ISceneData& Shader::SceneData() {
 	if (!pm_sceneData) { pm_sceneData = DefaultSceneData(); }
 	return *pm_sceneData;
 }
-
-Shader::ConstBufferInfo::ConstBufferInfo(unique_resource<ID3D11Buffer>&& resource, int pixelSlot, int vertexSlot) : resource(std::move(resource)), pixelShaderSlot(pixelSlot), vertexShaderSlot(vertexSlot) {}
