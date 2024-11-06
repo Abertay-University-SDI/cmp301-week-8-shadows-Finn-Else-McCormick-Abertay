@@ -3,12 +3,6 @@
 Texture2D texture0 : register(t0);
 SamplerState samplerState : register(s0);
 
-cbuffer TimeBuffer : register(b0)
-{
-    float elapsedTime;
-    float _padding_t[3];
-}
-
 cbuffer ScreenBuffer : register(b1)
 {
     float width;

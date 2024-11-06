@@ -12,10 +12,10 @@
 #include <scene/LightData.h>
 #include <scene/CameraController.h>
 #include <scene/OrthoCamera.h>
-#include <shaders/Shader.h>
+
+#include <shaders/scene/SceneShader.h>
 
 #include <shaders/post/PostprocessingShader.h>
-#include <shaders/post/BlurShader.h>
 #include <shaders/post/DirectionalBlurShader.h>
 
 #include <vector>
@@ -48,14 +48,14 @@ protected:
 	void RenderModel(const ModelData&, const Camera&, const std::vector<LightData>& = std::vector<LightData>{}, const XMFLOAT3& ambientLight = XMFLOAT3(0.f, 0.f, 0.f));
 	void RenderPass(IRenderTarget& target, const Camera& camera, bool clear, const std::vector<ModelData>& models, const std::vector<LightData>& lights = std::vector<LightData>{}, const XMFLOAT3& ambientLight = XMFLOAT3(0.f, 0.f, 0.f), const XMFLOAT4& clearColour = XMFLOAT4(0.f, 0.f, 0.f, 1.f));
 
-	void PostprocessPass(Shader& shader, IRenderTarget* activeTargetOverride = nullptr);
+	void PostprocessPass(PostprocessingShader& shader, IRenderTarget* activeTargetOverride = nullptr);
 
 private:
 	std::unique_ptr<CameraController> pm_playerCamera;
 	std::unique_ptr<OrthoCamera> pm_screenspaceCamera;
 	std::unique_ptr<ImGuiDebugRenderer> pm_debugRenderer;
 
-	std::unique_ptr<Shader> pm_lightShader;
+	std::unique_ptr<SceneShader> pm_lightShader;
 	std::unique_ptr<PostprocessingShader> pm_postDefaultShader;
 	std::unique_ptr<DirectionalBlurShader> pm_directionalBlurShader;
 

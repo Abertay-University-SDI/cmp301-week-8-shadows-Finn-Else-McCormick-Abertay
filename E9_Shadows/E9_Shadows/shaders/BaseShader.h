@@ -68,10 +68,7 @@ protected:
 		auto& info = m_constantBuffers.at(type_index<BufferType>());
 		auto& buffer = info.UniqueResource();
 		__Internal_UploadBuffer(buffer.get(), bufferContents);
-		auto& slotsMap = info.SlotsMap();
-		for (auto& pair : slotsMap) {
-			ShaderType shaderType = pair.first;
-			int slot = pair.second;
+		for (auto& [shaderType, slot] : info.SlotsMap()) {
 			if (slot >= 0) {
 				switch (shaderType) {
 				case VERTEX_SHADER:		{ p_deviceContext->VSSetConstantBuffers(slot, 1, buffer.ptr_to_ptr()); } break;
@@ -110,7 +107,7 @@ protected:
 		if (slot < 0) { info.ClearSlot<Shader>(); }
 		else {
 			// Assert that slot is not already in use
-			for (auto& pair : m_constantBuffers) { assert(slot != pair.second.GetSlot<Shader>()); }
+			for (auto& [typeIndex, info] : m_constantBuffers) { assert(slot != info.GetSlot<Shader>()); }
 			info.SetSlot<Shader>(slot);
 		}
 	}

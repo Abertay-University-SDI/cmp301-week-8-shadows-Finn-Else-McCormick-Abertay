@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\DXFramework;$(ProjectDir);(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -160,7 +160,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\include;$(SolutionDir)\DXFramework;$(ProjectDir);(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>Default</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -202,14 +202,14 @@
     <ClCompile Include="gui\TransformWidgets.cpp" />
     <ClCompile Include="scene\LightData.cpp" />
     <ClCompile Include="scene\OrthoCamera.cpp" />
-    <ClCompile Include="shaders\post\BlurShader.cpp" />
     <ClCompile Include="shaders\post\DirectionalBlurShader.cpp" />
-    <ClCompile Include="shaders\Shader.cpp" />
+    <ClCompile Include="shaders\scene\SceneShader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="scene\ModelData.cpp" />
     <ClCompile Include="scene\Camera.cpp" />
     <ClCompile Include="scene\CameraController.cpp" />
     <ClCompile Include="shaders\post\PostprocessingShader.cpp" />
+    <ClCompile Include="shaders\ShaderInterfaces.cpp" />
     <ClCompile Include="system\AppManager.cpp" />
     <ClCompile Include="system\DeviceContextDependent.cpp" />
     <ClCompile Include="system\IApp.cpp" />
@@ -239,14 +239,13 @@
     <ClInclude Include="gui\ImGuiDebugRenderer.h" />
     <ClInclude Include="gui\TransformWidgets.h" />
     <ClInclude Include="scene\LightData.h" />
-    <ClInclude Include="shaders\post\BlurShader.h" />
     <ClInclude Include="shaders\post\DirectionalBlurShader.h" />
     <ClInclude Include="shaders\ShaderInterfaces.h" />
     <ClInclude Include="system\DeviceContextDependent.h" />
     <ClInclude Include="system\Renderer.h" />
     <ClInclude Include="system\RenderTarget.h" />
     <ClInclude Include="scene\OrthoCamera.h" />
-    <ClInclude Include="shaders\Shader.h" />
+    <ClInclude Include="shaders\scene\SceneShader.h" />
     <ClInclude Include="scene\ModelData.h" />
     <ClInclude Include="scene\Camera.h" />
     <ClInclude Include="scene\CameraController.h" />
@@ -287,14 +286,6 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="shaders\post\blurHorizontalPass_post.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="shaders\post\blurVerticalPass_post.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="shaders\post\directionalBlur_post.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

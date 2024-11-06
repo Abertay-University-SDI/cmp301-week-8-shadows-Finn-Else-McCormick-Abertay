@@ -1,8 +1,8 @@
-#include "Shader.h"
+#include "SceneShader.h"
 
 #include <util/WideStringUtils.h>
 
-Shader::Shader(const DeviceInfo& info, HWND hwnd, const std::string& vertexShader, const std::string& pixelShader) : BaseShader(info, hwnd)
+SceneShader::SceneShader(const DeviceInfo& info, HWND hwnd, const std::string& vertexShader, const std::string& pixelShader) : BaseShader(info, hwnd)
 {
 	// Load (+ compile) shader files
 	LoadVertexShader("shaders/" + vertexShader + ".cso");
@@ -16,23 +16,17 @@ Shader::Shader(const DeviceInfo& info, HWND hwnd, const std::string& vertexShade
 	sampleState = CreateSamplerState();
 }
 
-void Shader::UploadMatrixData(const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection)
-{
-	// Transpose the matrices to prepare them for the shader
-	XMMATRIX tworld = XMMatrixTranspose(world);
-	XMMATRIX tview = XMMatrixTranspose(view);
-	XMMATRIX tproj = XMMatrixTranspose(projection);
-
-	MatrixBuffer bufObject{ tworld, tview, tproj };
+void SceneShader::UploadMatrixData(const XMMATRIX& world, const XMMATRIX& view, const XMMATRIX& projection) {
+	MatrixBuffer bufObject{ XMMatrixTranspose(world), XMMatrixTranspose(view), XMMatrixTranspose(projection) };
 	UploadConstantBuffer(bufObject);
 }
 
-void Shader::UploadTimeData(float time, float extraValue1, float extraValue2, float extraValue3) {
+void SceneShader::UploadTimeData(float time, float extraValue1, float extraValue2, float extraValue3) {
 	TimeBuffer bufObject{ time, extraValue1, extraValue2, extraValue3 };
 	UploadConstantBuffer(bufObject);
 }
 
-void Shader::UploadLightData(const std::vector<LightData>& lights, const XMFLOAT3& ambient, const Camera& camera)
+void SceneShader::UploadLightData(const std::vector<LightData>& lights, const XMFLOAT3& ambient, const Camera& camera)
 {
 	// Send light data to pixel shader
 	LightsBuffer lightsBufObject{};
@@ -50,30 +44,9 @@ void Shader::UploadLightData(const std::vector<LightData>& lights, const XMFLOAT
 	UploadConstantBuffer(camBufObject);
 }
 
-void Shader::UploadTextureData(ID3D11ShaderResourceView* albedoTexture, ID3D11ShaderResourceView* normalTexture)
-{
+void SceneShader::UploadTextureData(ID3D11ShaderResourceView* albedoTexture, ID3D11ShaderResourceView* normalTexture) {
 	// Set shader texture resource in the pixel shader.
 	if (albedoTexture) { p_deviceContext->PSSetShaderResources(0, 1, &albedoTexture); }
 	if (normalTexture) { p_deviceContext->PSSetShaderResources(1, 1, &normalTexture); }
 	p_deviceContext->PSSetSamplers(0, 1, sampleState.ptr_to_ptr());
-}
-
-void Shader::UploadExtraModelData(const IModelData&) {
-}
-
-std::unique_ptr<Shader::IModelData> Shader::DefaultModelData() const {
-	return std::make_unique<Shader::IModelData>();
-}
-
-void Shader::UploadExtraSceneData() {
-}
-
-std::unique_ptr<Shader::ISceneData> Shader::DefaultSceneData() const {
-	return std::make_unique<Shader::ISceneData>();
-}
-
-Shader::ISceneData& Shader::SceneData() {
-	// Can't do this in constructor cause virtual functions
-	if (!pm_sceneData) { pm_sceneData = DefaultSceneData(); }
-	return *pm_sceneData;
 }

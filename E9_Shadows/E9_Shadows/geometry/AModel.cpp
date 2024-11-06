@@ -1,5 +1,6 @@
 #include "AModel.h"
 
+/*
 AModel::AModel(const DeviceInfo& info, const std::string& file) : BaseMesh(info)
 {
 	importModel(file);
@@ -17,26 +18,6 @@ void AModel::InitBuffers()
 
 void AModel::importModel(const std::string& pFile)
 {
-	// Create an instance of the Importer class
-	Assimp::Importer importer;
-	// And have it read the given file with some example postprocessing
-	// Usually - if speed is not the most important aspect for you - you'll
-	// probably to request more postprocessing than we do in this example.
-	const aiScene* scene = importer.ReadFile(pFile,
-		aiProcess_CalcTangentSpace |
-		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType|
-		aiProcess_MakeLeftHanded|
-		aiProcess_FlipUVs);
-	// If the import failed, report it
-	/*if (!scene)
-	{
-		DoTheErrorLogging(importer.GetErrorString());
-		return false;
-	}*/
-	// Now we can access the file's contents.
-	//modelProcessing(scene);#
 
 	if (scene)
 	{
@@ -204,32 +185,6 @@ void AModel::processNode(const aiNode* node, const aiScene* scene)
 }
 void AModel::processMesh(const aiMesh* mesh, const aiScene* scene)
 {
-	/*for (UINT i = 0; i < mesh->mNumVertices; i++)
-	{
-		VERTEX vertex;
-
-		vertex.X = mesh->mVertices[i].x;
-		vertex.Y = mesh->mVertices[i].y;
-		vertex.Z = mesh->mVertices[i].z;
-
-		if (mesh->mTextureCoords[0])
-		{
-			vertex.texcoord.x = (float)mesh->mTextureCoords[0][i].x;
-			vertex.texcoord.y = (float)mesh->mTextureCoords[0][i].y;
-		}
-
-		vertices.push_back(vertex);
-	}
-
-	for (UINT i = 0; i < mesh->mNumFaces; i++)
-	{
-		aiFace face = mesh->mFaces[i];
-
-		for (UINT j = 0; j < face.mNumIndices; j++)
-			indices.push_back(face.mIndices[j]);
-	}*/
-
-	//---------------------------------
 
 	for (UINT i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -269,6 +224,8 @@ void AModel::processMesh(const aiMesh* mesh, const aiScene* scene)
 			indices.push_back(face.mIndices[j]);
 	}
 }
+
+*/
 
 //vector<Texture> ModelLoader::loadMaterialTextures(aiMaterial * mat, aiTextureType type, string typeName, const aiScene * scene)
 //{

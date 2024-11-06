@@ -1,15 +1,19 @@
 #include "ModelData.h"
 
-ModelData::ModelData(std::unique_ptr<BaseMesh>&& mesh, ::Shader& shader, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* normalMap, Transform trans)
-	: p_shader(&shader), pm_shaderAdditionalData(p_shader->DefaultModelData()), pm_mesh(std::move(mesh)), p_texture(texture), p_normalMap(normalMap), m_transform(trans) {}
+ModelData::ModelData(std::unique_ptr<BaseMesh>&& mesh, ::BaseShader& shader, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* normalMap, Transform trans)
+	: p_shader(&shader), pm_shaderAdditionalData(nullptr), pm_mesh(std::move(mesh)), p_texture(texture), p_normalMap(normalMap), m_transform(trans) {
+
+	auto modelDataShaderPtr = dynamic_cast<IModelDataShader*>(&shader);
+	if (modelDataShaderPtr) { pm_shaderAdditionalData = modelDataShaderPtr->DefaultModelData(); }
+}
 
 BaseMesh& ModelData::Mesh() const { return *pm_mesh; }
 
-Shader& ModelData::Shader() const { return *p_shader; }
-void ModelData::SetShader(::Shader* shader) { p_shader = shader; }
+BaseShader& ModelData::Shader() const { return *p_shader; }
+void ModelData::SetShader(::BaseShader* shader) { p_shader = shader; }
 
-Shader::IModelData& ModelData::ShaderData() { return *pm_shaderAdditionalData; }
-const Shader::IModelData& ModelData::ShaderData() const { return *pm_shaderAdditionalData; }
+IModelDataShader::IModelData& ModelData::ShaderData() { return *pm_shaderAdditionalData; }
+const IModelDataShader::IModelData& ModelData::ShaderData() const { return *pm_shaderAdditionalData; }
 
 ID3D11ShaderResourceView* ModelData::Texture() const { return p_texture; }
 void ModelData::SetTexture(ID3D11ShaderResourceView* texture) { p_texture = texture; }

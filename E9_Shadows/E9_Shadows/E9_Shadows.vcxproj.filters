@@ -21,7 +21,7 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shaders\Shader.cpp">
+    <ClCompile Include="shaders\scene\SceneShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
@@ -117,10 +117,10 @@
     <ClCompile Include="shaders\BaseShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shaders\post\BlurShader.cpp">
+    <ClCompile Include="shaders\post\DirectionalBlurShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shaders\post\DirectionalBlurShader.cpp">
+    <ClCompile Include="shaders\ShaderInterfaces.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,7 +128,7 @@
     <ClInclude Include="AppMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shaders\Shader.h">
+    <ClInclude Include="shaders\scene\SceneShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
@@ -227,9 +227,6 @@
     <ClInclude Include="shaders\BaseShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shaders\post\BlurShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="shaders\post\DirectionalBlurShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -252,8 +249,6 @@
     <FxCompile Include="shaders\post\default_post.hlsl" />
     <FxCompile Include="shaders\post\greyscale_post.hlsl" />
     <FxCompile Include="shaders\post\postprocessing_vs.hlsl" />
-    <FxCompile Include="shaders\post\blurHorizontalPass_post.hlsl" />
-    <FxCompile Include="shaders\post\blurVerticalPass_post.hlsl" />
     <FxCompile Include="shaders\post\directionalBlur_post.hlsl" />
     <FxCompile Include="shaders\include\gamma_lib.hlsl" />
   </ItemGroup>

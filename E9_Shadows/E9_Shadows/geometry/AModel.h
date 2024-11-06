@@ -8,6 +8,7 @@
 * \author Paul Robertson
 */
 
+/*
 #pragma once
 
 #include <geometry/BaseMesh.h>
@@ -21,12 +22,6 @@ using namespace DirectX;
 class AModel : public BaseMesh
 {
 public:
-	/** \brief Imports model and builds mesh representation.
-	*
-	* Loads a sub-set of model. Tested with single mesh FBX and OBJ. Currently does not auto load textures. 
-	* @param device is the renderer device
-	* @param file path to model file
-	*/
 	AModel(const DeviceInfo&, const std::string& file);
 	~AModel();
 
@@ -42,3 +37,4 @@ protected:
 	std::vector<VertexType> vertices;
 	std::vector<unsigned long> indices;
 };
+*/

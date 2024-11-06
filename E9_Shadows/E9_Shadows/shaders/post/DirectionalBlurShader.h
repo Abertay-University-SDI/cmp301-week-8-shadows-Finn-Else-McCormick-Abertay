@@ -2,7 +2,7 @@
 
 #include <shaders/post/PostprocessingShader.h>
 
-class DirectionalBlurShader : public PostprocessingShader
+class DirectionalBlurShader : public PostprocessingShader, public ISceneDataShader
 {
 public:
 	DirectionalBlurShader(const DeviceInfo&, HWND hwnd);
@@ -13,10 +13,9 @@ public:
 		int samples = 5;
 	};
 
-	virtual void UploadExtraSceneData() override;
-
 protected:
 	virtual std::unique_ptr<ISceneData> DefaultSceneData() const override;
+	virtual void __Internal_UploadSceneData(const ISceneData&) override;
 
 private:
 	struct DirectionalBlurBuffer {

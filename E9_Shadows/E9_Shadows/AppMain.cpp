@@ -62,7 +62,7 @@ void AppMain::Init()
 	pm_textureMgr->Load("placeholder", "res/DefaultDiffuse.png");
 
 	// Create shaders
-	pm_lightShader = std::make_unique<Shader>(deviceInfo, hwnd, "scene/light_vs", "scene/light_ps");
+	pm_lightShader = std::make_unique<SceneShader>(deviceInfo, hwnd, "scene/light_vs", "scene/light_ps");
 
 	pm_postDefaultShader = std::make_unique<PostprocessingShader>(deviceInfo, hwnd);
 
@@ -161,17 +161,19 @@ void AppMain::OnResized() {
 	Frame();
 }
 
+#define IF_IS_TYPE_THEN(ptr, Type, FunctionCall) do { auto dptr = dynamic_cast<Type*>(ptr); if (dptr) { dptr->FunctionCall; } } while (false)
+
 void AppMain::RenderModel(const ModelData& model, const Camera& camera, const std::vector<LightData>& lights, const XMFLOAT3& ambientLight) {
 	if (!model.ShouldRender()) { return; }
 
 	auto& shader = model.Shader();
 
-	shader.UploadMatrixData(model.Trans().AsMatrix(), camera.ViewMatrix(), camera.ProjectionMatrix());
-	shader.UploadTimeData(pm_timer->ElapsedTime(), (float)m_showNormals, (float)m_disableTextures, normalOffset);
-	shader.UploadLightData(lights, ambientLight, camera);
-	shader.UploadTextureData(model.Texture(), model.NormalMap());
-	shader.UploadExtraModelData(model.ShaderData());
-	shader.UploadExtraSceneData();
+	IF_IS_TYPE_THEN(&shader, IMatrixShader,		UploadMatrixData(model.Trans().AsMatrix(), camera.ViewMatrix(), camera.ProjectionMatrix()));
+	IF_IS_TYPE_THEN(&shader, ITimeShader,		UploadTimeData(pm_timer->ElapsedTime(), (float)m_showNormals, (float)m_disableTextures, normalOffset));
+	IF_IS_TYPE_THEN(&shader, ILightShader,		UploadLightData(lights, ambientLight, camera));
+	IF_IS_TYPE_THEN(&shader, ITextureShader,	UploadTextureData(model.Texture(), model.NormalMap()));
+	IF_IS_TYPE_THEN(&shader, IModelDataShader,	UploadModelData(model.ShaderData()));
+	IF_IS_TYPE_THEN(&shader, ISceneDataShader,	UploadSceneData());
 
 	shader.Render(model.Mesh());
 }
@@ -188,7 +190,7 @@ void AppMain::RenderPass(IRenderTarget& target, const Camera& camera, bool clear
 RenderTarget& AppMain::ActiveTarget() { return (m_targetFirstActive ? *pm_targetFirst : *pm_targetSecond); }
 RenderTarget& AppMain::BackTarget() { return (m_targetFirstActive ? *pm_targetSecond : *pm_targetFirst); }
 
-void AppMain::PostprocessPass(Shader& shader, IRenderTarget* activeTarget) {
+void AppMain::PostprocessPass(PostprocessingShader& shader, IRenderTarget* activeTarget) {
 	if (!activeTarget) { activeTarget = &ActiveTarget(); }
 
 	// Wireframe mode is applied to scene rendering but not postprocessing
@@ -353,7 +355,7 @@ void AppMain::Gui()
 		for (auto& light : m_lights) {
 			lightSection(light);
 		}
-		if (m_lights.size() < Shader::NUM_LIGHTS) {
+		if (m_lights.size() < ILightShader::NUM_LIGHTS) {
 			if (ImGui::Button("Add Light")) {
 				AddLight();
 			}
