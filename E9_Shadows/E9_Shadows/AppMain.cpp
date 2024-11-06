@@ -339,8 +339,7 @@ void AppMain::Gui()
 
 	ImGui::SetNextWindowPos(ImVec2(320.f, 25.f), ImGuiCond_Once);
 	if (ImGui::Begin("Debug", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-		if (ImGui::Checkbox("Wireframe", &m_wireframe));
-
+		ImGui::Checkbox("Wireframe", &m_wireframe);
 		ImGui::Checkbox("Disable Textures", &m_disableTextures);
 		ImGui::Checkbox("Display Normals", &m_showNormals);
 		ImGui::Checkbox("Debug Draw", &m_debugDraw);
