@@ -1,11 +1,10 @@
 #pragma once
 
-#include "BaseShader.h"
+#include <shaders/BaseShader.h>
 #include <scene/LightData.h>
 #include <scene/Camera.h>
-#include <system/UniqueResource.h>
 
-using namespace DirectX;
+#include <shaders/ShaderInterfaces.h>
 
 class Shader : public BaseShader
 {
@@ -59,8 +58,6 @@ protected:
 	};
 
 private:
-	void InitShader(const std::string& cs, const std::string& ps);
-
 	unique_resource<ID3D11SamplerState> sampleState;
 
 	std::unique_ptr<ISceneData> pm_sceneData;

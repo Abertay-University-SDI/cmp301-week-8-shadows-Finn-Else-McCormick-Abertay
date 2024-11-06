@@ -57,7 +57,6 @@ private:
 
 	std::unique_ptr<Shader> pm_lightShader;
 	std::unique_ptr<PostprocessingShader> pm_postDefaultShader;
-	std::unique_ptr<BlurShader> pm_blurHorizontalShader, pm_blurVerticalShader;
 	std::unique_ptr<DirectionalBlurShader> pm_directionalBlurShader;
 
 	std::vector<ModelData> m_models;

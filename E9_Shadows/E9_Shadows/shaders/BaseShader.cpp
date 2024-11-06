@@ -151,6 +151,20 @@ unique_resource<ID3D11SamplerState> BaseShader::CreateSamplerState(D3D11_FILTER 
 	return unique_resource<ID3D11SamplerState>(sampleState);
 }
 
+BaseShader::ConstBufferInfo::ConstBufferInfo(unique_resource<ID3D11Buffer>&& resource) : pm_resource(std::move(resource)) {}
+
+ID3D11Buffer* BaseShader::ConstBufferInfo::Resource() const {
+	return pm_resource.get();
+}
+
+unique_resource<ID3D11Buffer>& BaseShader::ConstBufferInfo::UniqueResource() {
+	return pm_resource;
+}
+
+const std::map<BaseShader::ShaderType, int>& BaseShader::ConstBufferInfo::SlotsMap() const {
+	return m_slots;
+}
+
 // De/Activate shader stages and send shaders to GPU.
 void BaseShader::Render(BaseMesh& mesh)
 {

@@ -1,7 +1,7 @@
 #include "BlurShader.h"
 
 BlurShader::BlurShader(const DeviceInfo& info, HWND hwnd, const std::string& pixelShader) : PostprocessingShader(info, hwnd, pixelShader) {
-	CreateConstantBuffer<BlurBuffer>(2);
+	CreateConstantBuffer<BlurBuffer, PIXEL_SHADER>(2);
 }
 
 void BlurShader::UploadExtraSceneData() {

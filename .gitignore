@@ -7,7 +7,7 @@
 
 # User-specific files
 *.suo
-*.user
+#*.user
 *.userosscache
 *.sln.docstates
 
@@ -345,3 +345,9 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+E*/lib
+E*/x64
+
+imgui.ini
+imgui*.ini

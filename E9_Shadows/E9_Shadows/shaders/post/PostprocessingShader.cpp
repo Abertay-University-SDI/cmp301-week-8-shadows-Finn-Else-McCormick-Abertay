@@ -1,9 +1,10 @@
 #include "PostprocessingShader.h"
 
 PostprocessingShader::PostprocessingShader(const DeviceInfo& info, HWND hwnd, const std::string& pixelShader) : Shader(info, hwnd, "post/postprocessing_vs", pixelShader) {
-	SetConstantBufferSlots<LightsBuffer>(-1, -1);
-	SetConstantBufferSlots<CameraBuffer>(-1, -1);
-	CreateConstantBuffer<ScreenBuffer>(1);
+	ClearConstantBufferSlot<LightsBuffer, PIXEL_SHADER>();
+	ClearConstantBufferSlot<CameraBuffer, VERTEX_SHADER>();
+
+	CreateConstantBuffer<ScreenBuffer, PIXEL_SHADER>(1);
 }
 
 void PostprocessingShader::UploadExtraModelData(const IModelData& rawData) {
