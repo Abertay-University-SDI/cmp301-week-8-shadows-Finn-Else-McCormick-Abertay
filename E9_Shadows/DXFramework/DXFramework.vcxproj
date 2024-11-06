@@ -28,26 +28,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -154,7 +154,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,9 +169,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\include\imGUI\imconfig.h" />
     <ClInclude Include="..\include\imGUI\imgui.h" />
     <ClInclude Include="..\include\imGUI\imgui_impl_dx11.h" />
@@ -180,31 +177,10 @@
     <ClInclude Include="..\include\imGUI\stb_rect_pack.h" />
     <ClInclude Include="..\include\imGUI\stb_textedit.h" />
     <ClInclude Include="..\include\imGUI\stb_truetype.h" />
-    <ClInclude Include="AModel.h" />
-    <ClInclude Include="BaseApplication.h" />
-    <ClInclude Include="BaseMesh.h" />
-    <ClInclude Include="BaseShader.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="CubeMesh.h" />
-    <ClInclude Include="D3D.h" />
-    <ClInclude Include="DXF.h" />
-    <ClInclude Include="FPCamera.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Light.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="OrthoMesh.h" />
-    <ClInclude Include="PlaneMesh.h" />
-    <ClInclude Include="PointMesh.h" />
-    <ClInclude Include="QuadMesh.h" />
-    <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="ShadowMap.h" />
-    <ClInclude Include="SphereMesh.h" />
-    <ClInclude Include="System.h" />
-    <ClInclude Include="TessellationMesh.h" />
-    <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Timer.h" />
     <ClInclude Include="TokenStream.h" />
-    <ClInclude Include="TriangleMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\imGUI\imgui.cpp" />
@@ -212,30 +188,10 @@
     <ClCompile Include="..\include\imGUI\imgui_draw.cpp" />
     <ClCompile Include="..\include\imGUI\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\include\imGUI\imgui_impl_win32.cpp" />
-    <ClCompile Include="AModel.cpp" />
-    <ClCompile Include="BaseApplication.cpp" />
-    <ClCompile Include="BaseMesh.cpp" />
-    <ClCompile Include="BaseShader.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CubeMesh.cpp" />
-    <ClCompile Include="D3D.cpp" />
-    <ClCompile Include="FPCamera.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Light.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="OrthoMesh.cpp" />
-    <ClCompile Include="PlaneMesh.cpp" />
-    <ClCompile Include="PointMesh.cpp" />
-    <ClCompile Include="QuadMesh.cpp" />
-    <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
-    <ClCompile Include="SphereMesh.cpp" />
-    <ClCompile Include="System.cpp" />
-    <ClCompile Include="TessellationMesh.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TokenStream.cpp" />
-    <ClCompile Include="TriangleMesh.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,10 @@
 #pragma once
-#include "d3d.h"
-
+#include <Windows.h>
+#include <d3d11.h>
+#include <DirectXMath.h>
+#include <vector>
+#include <dxgi.h>
+#include <string>
 using namespace DirectX;
 
 class ShadowMap
