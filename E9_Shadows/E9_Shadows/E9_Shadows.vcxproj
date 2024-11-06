@@ -202,6 +202,7 @@
     <ClCompile Include="gui\TransformWidgets.cpp" />
     <ClCompile Include="scene\LightData.cpp" />
     <ClCompile Include="scene\OrthoCamera.cpp" />
+    <ClCompile Include="shaders\pass\DepthShader.cpp" />
     <ClCompile Include="shaders\post\DirectionalBlurShader.cpp" />
     <ClCompile Include="shaders\scene\SceneShader.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="gui\ImGuiDebugRenderer.h" />
     <ClInclude Include="gui\TransformWidgets.h" />
     <ClInclude Include="scene\LightData.h" />
+    <ClInclude Include="shaders\pass\DepthShader.h" />
     <ClInclude Include="shaders\post\DirectionalBlurShader.h" />
     <ClInclude Include="shaders\ShaderInterfaces.h" />
     <ClInclude Include="system\DeviceContextDependent.h" />
@@ -265,7 +267,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="shaders\scene\default_ps.hlsl">
+    <FxCompile Include="shaders\pass\depth_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="shaders\default_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
@@ -276,6 +282,10 @@
       </EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </EntryPointName>
+    </FxCompile>
+    <FxCompile Include="shaders\pass\depth_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="shaders\scene\light_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -299,7 +309,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="shaders\scene\default_vs.hlsl">
+    <FxCompile Include="shaders\default_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>

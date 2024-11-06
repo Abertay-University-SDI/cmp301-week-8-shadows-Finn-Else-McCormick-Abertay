@@ -123,6 +123,9 @@
     <ClCompile Include="shaders\ShaderInterfaces.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="shaders\pass\DepthShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AppMain.h">
@@ -236,6 +239,9 @@
     <ClInclude Include="util\TypeIndexUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shaders\pass\DepthShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\scene\light_ps.hlsl">
@@ -244,12 +250,14 @@
     <FxCompile Include="shaders\scene\light_vs.hlsl">
       <Filter>Resource Files</Filter>
     </FxCompile>
-    <FxCompile Include="shaders\scene\default_ps.hlsl" />
-    <FxCompile Include="shaders\scene\default_vs.hlsl" />
+    <FxCompile Include="shaders\default_ps.hlsl" />
+    <FxCompile Include="shaders\default_vs.hlsl" />
     <FxCompile Include="shaders\post\default_post.hlsl" />
     <FxCompile Include="shaders\post\greyscale_post.hlsl" />
     <FxCompile Include="shaders\post\postprocessing_vs.hlsl" />
     <FxCompile Include="shaders\post\directionalBlur_post.hlsl" />
     <FxCompile Include="shaders\include\gamma_lib.hlsl" />
+    <FxCompile Include="shaders\pass\depth_ps.hlsl" />
+    <FxCompile Include="shaders\pass\depth_vs.hlsl" />
   </ItemGroup>
 </Project>

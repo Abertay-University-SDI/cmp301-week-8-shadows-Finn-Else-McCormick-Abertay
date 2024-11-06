@@ -69,6 +69,8 @@ void AppMain::Init()
 	pm_directionalBlurShader = std::make_unique<DirectionalBlurShader>(deviceInfo, hwnd);
 	pm_directionalBlurShader->SceneDataAs<DirectionalBlurShader::DirectionalBlurData>();
 
+	pm_depthShader = std::make_unique<DepthShader>(deviceInfo, hwnd);
+
 	// Create models
 	m_models.push_back(make_model<CubeMesh>(*pm_lightShader, pm_textureMgr->Get("brick"), nullptr, deviceInfo));
 	auto& cube = m_models.back();
@@ -163,28 +165,26 @@ void AppMain::OnResized() {
 
 #define IF_IS_TYPE_THEN(ptr, Type, FunctionCall) do { auto dptr = dynamic_cast<Type*>(ptr); if (dptr) { dptr->FunctionCall; } } while (false)
 
-void AppMain::RenderModel(const ModelData& model, const Camera& camera, const std::vector<LightData>& lights, const XMFLOAT3& ambientLight) {
+void AppMain::RenderModel(const ModelData& model, const Camera& camera, BaseShader* overrideShader, const std::vector<LightData>& lights, const XMFLOAT3& ambientLight) {
 	if (!model.ShouldRender()) { return; }
 
-	auto& shader = model.Shader();
+	BaseShader* shader = (overrideShader ? overrideShader : &model.Shader());
 
-	IF_IS_TYPE_THEN(&shader, IMatrixShader,		UploadMatrixData(model.Trans().AsMatrix(), camera.ViewMatrix(), camera.ProjectionMatrix()));
-	IF_IS_TYPE_THEN(&shader, ITimeShader,		UploadTimeData(pm_timer->ElapsedTime(), (float)m_showNormals, (float)m_disableTextures, normalOffset));
-	IF_IS_TYPE_THEN(&shader, ILightShader,		UploadLightData(lights, ambientLight, camera));
-	IF_IS_TYPE_THEN(&shader, ITextureShader,	UploadTextureData(model.Texture(), model.NormalMap()));
-	IF_IS_TYPE_THEN(&shader, IModelDataShader,	UploadModelData(model.ShaderData()));
-	IF_IS_TYPE_THEN(&shader, ISceneDataShader,	UploadSceneData());
+	IF_IS_TYPE_THEN(shader, IMatrixShader,		UploadMatrixData(model.Trans().AsMatrix(), camera.ViewMatrix(), camera.ProjectionMatrix()));
+	IF_IS_TYPE_THEN(shader, ITimeShader,		UploadTimeData(pm_timer->ElapsedTime(), (float)m_showNormals, (float)m_disableTextures, normalOffset));
+	IF_IS_TYPE_THEN(shader, ILightShader,		UploadLightData(lights, ambientLight, camera));
+	IF_IS_TYPE_THEN(shader, ITextureShader,	UploadTextureData(model.Texture(), model.NormalMap()));
+	IF_IS_TYPE_THEN(shader, IModelDataShader,	UploadModelData(model.ShaderData()));
+	IF_IS_TYPE_THEN(shader, ISceneDataShader,	UploadSceneData());
 
-	shader.Render(model.Mesh());
+	shader->Render(model.Mesh());
 }
 
-void AppMain::RenderPass(IRenderTarget& target, const Camera& camera, bool clear, const std::vector<ModelData>& models, const std::vector<LightData>& lights, const XMFLOAT3& ambientLight, const XMFLOAT4& clearColour) {
+void AppMain::RenderPass(IRenderTarget& target, const Camera& camera, const std::vector<ModelData>& models, const std::vector<LightData>& lights, const XMFLOAT3& ambientLight, const XMFLOAT4& clearColour, BaseShader* overrideShader) {
 	target.Bind();
-	if (clear) { target.Clear(clearColour); }
+	target.Clear(clearColour);
 
-	for (auto& model : models) {
-		RenderModel(model, camera, lights, ambientLight);
-	}
+	for (auto& model : models) { RenderModel(model, camera, overrideShader, lights, ambientLight); }
 }
 
 RenderTarget& AppMain::ActiveTarget() { return (m_targetFirstActive ? *pm_targetFirst : *pm_targetSecond); }
@@ -198,9 +198,8 @@ void AppMain::PostprocessPass(PostprocessingShader& shader, IRenderTarget* activ
 	BackTarget().SetWireframe(m_wireframe);
 
 	pm_screenQuad->SetTexture(BackTarget().Texture());
-	pm_screenQuad->SetShader(&shader);
 	activeTarget->Bind(); activeTarget->Clear();
-	RenderModel(*pm_screenQuad, *pm_screenspaceCamera);
+	RenderModel(*pm_screenQuad, *pm_screenspaceCamera, &shader);
 
 	// Flip targets
 	m_targetFirstActive = !m_targetFirstActive;
@@ -209,7 +208,7 @@ void AppMain::PostprocessPass(PostprocessingShader& shader, IRenderTarget* activ
 bool AppMain::Render()
 {
 	// Main Pass
-	RenderPass(BackTarget(), *pm_playerCamera, true, m_models, m_lights, XMFLOAT3(0.2f, 0.2f, 0.2f), XMFLOAT4(0.39f, 0.58f, 0.92f, 1.f));
+	RenderPass(BackTarget(), *pm_playerCamera, m_models, m_lights, XMFLOAT3(0.2f, 0.2f, 0.2f), XMFLOAT4(0.39f, 0.58f, 0.92f, 1.f), pm_depthShader.get());
 
 	// Blur passes
 	PostprocessPass(*pm_directionalBlurShader);

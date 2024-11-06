@@ -2,9 +2,7 @@
 
 #include <util/WideStringUtils.h>
 
-SceneShader::SceneShader(const DeviceInfo& info, HWND hwnd, const std::string& vertexShader, const std::string& pixelShader) : BaseShader(info, hwnd)
-{
-	// Load (+ compile) shader files
+SceneShader::SceneShader(const DeviceInfo& info, HWND hwnd, const std::string& vertexShader, const std::string& pixelShader) : BaseShader(info, hwnd) {
 	LoadVertexShader("shaders/" + vertexShader + ".cso");
 	LoadPixelShader("shaders/" + pixelShader + ".cso");
 

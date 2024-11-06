@@ -17,6 +17,7 @@
 
 #include <shaders/post/PostprocessingShader.h>
 #include <shaders/post/DirectionalBlurShader.h>
+#include <shaders/pass/DepthShader.h>
 
 #include <vector>
 #include <memory>
@@ -45,8 +46,8 @@ protected:
 	std::unique_ptr<Timer> pm_timer;
 	std::unique_ptr<TextureManager> pm_textureMgr;
 
-	void RenderModel(const ModelData&, const Camera&, const std::vector<LightData>& = std::vector<LightData>{}, const XMFLOAT3& ambientLight = XMFLOAT3(0.f, 0.f, 0.f));
-	void RenderPass(IRenderTarget& target, const Camera& camera, bool clear, const std::vector<ModelData>& models, const std::vector<LightData>& lights = std::vector<LightData>{}, const XMFLOAT3& ambientLight = XMFLOAT3(0.f, 0.f, 0.f), const XMFLOAT4& clearColour = XMFLOAT4(0.f, 0.f, 0.f, 1.f));
+	void RenderModel(const ModelData&, const Camera&, BaseShader* overrideShader = nullptr, const std::vector<LightData>& = std::vector<LightData>{}, const XMFLOAT3& ambientLight = XMFLOAT3(0.f, 0.f, 0.f));
+	void RenderPass(IRenderTarget& target, const Camera& camera, const std::vector<ModelData>& models, const std::vector<LightData>& lights = std::vector<LightData>{}, const XMFLOAT3& ambientLight = XMFLOAT3(0.f, 0.f, 0.f), const XMFLOAT4& clearColour = XMFLOAT4(0.f, 0.f, 0.f, 1.f), BaseShader* overrideShader = nullptr);
 
 	void PostprocessPass(PostprocessingShader& shader, IRenderTarget* activeTargetOverride = nullptr);
 
@@ -58,6 +59,7 @@ private:
 	std::unique_ptr<SceneShader> pm_lightShader;
 	std::unique_ptr<PostprocessingShader> pm_postDefaultShader;
 	std::unique_ptr<DirectionalBlurShader> pm_directionalBlurShader;
+	std::unique_ptr<DepthShader> pm_depthShader;
 
 	std::vector<ModelData> m_models;
 	std::unique_ptr<ModelData> pm_screenQuad;
